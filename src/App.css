@@ -161,3 +161,34 @@
 .st_header__statusText--online {
   color: #4fc9a4;
 }
+
+/* wraps the textarea so we can position the clear button inside it */
+.st_inputBar__textareaWrap {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.st_inputBar__textareaWrap .st_inputBar__textarea {
+  width: 100%;
+  padding-right: 2.2rem;
+}
+
+.st_inputBar__clearBtn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #4a4460;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+}
+
+.st_inputBar__clearBtn:hover {
+  color: #9b93b8;
+}

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { IoSend } from "react-icons/io5";
+import { IoCloseCircle } from "react-icons/io5"; // ← new
 import { RiRobot2Line } from "react-icons/ri";
 import "./index.css";
 import "./App.css";
@@ -132,6 +133,12 @@ export default function App() {
     if (e.key === "Enter") handleSubmit();
   };
 
+  // clears the typed text and puts focus back on the textarea
+  const handleClearInput = () => {
+    setPrompt("");
+    inputRef.current?.focus();
+  };
+
   return (
     <div className="st_page">
 
@@ -184,17 +191,32 @@ export default function App() {
 
       {/* prompt bar */}
       <div className="st_inputBar">
-        <textarea
-          ref={inputRef}              // attach ref so we can focus it after submit
-          className="st_inputBar__textarea"
-          placeholder="Type a message..."
-          rows={1}
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          onKeyDown={handleKeyDown}
-          disabled={isLoading}        // disable prompt bar while AI is responding
-          maxLength={1000}
-        />
+        <div className="st_inputBar__textareaWrap">
+          <textarea
+            ref={inputRef}              // attach ref so we can focus it after submit
+            className="st_inputBar__textarea"
+            placeholder="Type a message..."
+            rows={1}
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            onKeyDown={handleKeyDown}
+            disabled={isLoading}        // disable prompt bar while AI is responding
+            maxLength={1000}
+          />
+
+          {/* clear input button — only visible when there's something typed */}
+          {prompt && (
+            <button
+              className="st_inputBar__clearBtn"
+              onClick={handleClearInput}
+              title="Clear"
+              tabIndex={-1} // skip in tab order so Enter still submits
+            >
+              <IoCloseCircle size={16} />
+            </button>
+          )}
+        </div>
+
         <button
           className="st_inputBar__btn"
           onClick={handleSubmit}
