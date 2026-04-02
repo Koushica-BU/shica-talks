@@ -151,3 +151,13 @@
   opacity: 0.88;
   transform: scale(1.05);
 }
+
+.st_header__statusText {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b6585;
+}
+
+.st_header__statusText--online {
+  color: #4fc9a4;
+}
