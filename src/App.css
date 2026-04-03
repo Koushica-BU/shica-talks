@@ -192,3 +192,23 @@
 .st_inputBar__clearBtn:hover {
   color: #9b93b8;
 }
+
+.st_header__clearBtn {
+  margin-left: auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: none;
+  border: none;
+  color: #4a4460;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+
+.st_header__clearBtn:hover {
+  color: #e07090;
+  background: #1e1c2a;
+}

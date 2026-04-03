@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { IoSend } from "react-icons/io5";
-import { IoCloseCircle } from "react-icons/io5"; // ← new
+import { IoSend, IoCloseCircle } from "react-icons/io5";
 import { RiRobot2Line } from "react-icons/ri";
+import { MdDeleteSweep } from "react-icons/md";
 import "./index.css";
 import "./App.css";
 import ChatBubble from "./components/ChatBubble";
@@ -11,21 +11,73 @@ const HF_TOKEN   = import.meta.env.VITE_HF_TOKEN;
 const HF_API_URL = "/hf-api/v1/chat/completions";
 const HF_MODEL   = "meta-llama/Llama-3.1-8B-Instruct";
 
-// This is the first message the user sees when they open the app
-const INITIAL_MESSAGES = [
-  {
-    id: 1,
-    sender: "ai",
-    message: "Hey! I'm Shica. Ask me anything and I'll do my best to help.",
-  },
-];
+// the key to read/write messages in localStorage
+const STORAGE_KEY = "shica_messages";
+
+const GREETING = {
+  id: "greeting",
+  sender: "ai",
+  message: "Hey! I'm Shica. Ask me anything and I'll do my best to help.",
+  timestamp: Date.now(),
+};
+
+// read messages from localStorage
+function loadMessages() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return saved?.length ? saved : [GREETING];
+  } catch {
+    return [GREETING];
+  }
+}
+
+// write messages array to localStorage
+function saveMessages(messages) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+}
+
+// formats a timestamp into "Today", "Yesterday", or "April 1, 2025"
+function formatDayLabel(timestamp) {
+  const msgDate   = new Date(timestamp);
+  const today     = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
+
+  if (msgDate.toDateString() === today.toDateString())     return "Today";
+  if (msgDate.toDateString() === yesterday.toDateString()) return "Yesterday";
+
+  return msgDate.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+// checks if a date separator should appear before a given message
+// returns the label string if the day changed, null if not
+function getDateLabel(messages, index) {
+  const current = messages[index];
+  if (!current?.timestamp) return null;
+
+  // always show a label before the very first message
+  if (index === 0) return formatDayLabel(current.timestamp);
+
+  const prev = messages[index - 1];
+  if (!prev?.timestamp) return null;
+
+  const prevDay    = new Date(prev.timestamp).toDateString();
+  const currentDay = new Date(current.timestamp).toDateString();
+
+  // only insert a separator when the day actually changes
+  return prevDay !== currentDay ? formatDayLabel(current.timestamp) : null;
+}
 
 export default function App() {
 
   // messages — the full chat history, both user and AI
   // prompt   — whatever the user is currently typing
   // isLoading — true while we're waiting for the API to respond
-  const [messages, setMessages]   = useState(INITIAL_MESSAGES);
+  const [messages, setMessages]   = useState(loadMessages);
   const [prompt, setPrompt]       = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -43,10 +95,14 @@ export default function App() {
 
   // after loading finishes, focus prompt bar again
   useEffect(() => {
-    if (!isLoading) {
-      inputRef.current?.focus();
-    }
+    if (!isLoading) inputRef.current?.focus();
   }, [isLoading]);
+
+  // save to localStorage every time messages change
+  // this keeps history in sync automatically — no manual save needed
+  useEffect(() => {
+    saveMessages(messages);
+  }, [messages]);
 
   const handleSubmit = async () => {
     // don't do anything if the input is empty or a request is already running
@@ -57,6 +113,7 @@ export default function App() {
       id: Date.now(), // using timestamp as a unique id
       sender: "user",
       message: prompt.trim(),
+      timestamp: Date.now(), // timestamp is required for date separator logic
     };
 
     setMessages((prev) => [...prev, userMessage]);
@@ -107,6 +164,7 @@ export default function App() {
           id: Date.now() + 1,
           sender: "ai",
           message: text.trim(),
+          timestamp: Date.now(),
         },
       ]);
 
@@ -119,6 +177,7 @@ export default function App() {
           sender: "ai",
           message: err.message || "Something went wrong. Please try again.",
           isError: true,
+          timestamp: Date.now(),
         },
       ]);
     } finally {
@@ -139,6 +198,14 @@ export default function App() {
     inputRef.current?.focus();
   };
 
+  // wipes all chat history from state and localStorage
+  // resets back to just the greeting message
+  const handleClearHistory = () => {
+    const fresh = [{ ...GREETING, id: Date.now(), timestamp: Date.now() }];
+    setMessages(fresh);
+    saveMessages(fresh);
+  };
+
   return (
     <div className="st_page">
 
@@ -157,27 +224,44 @@ export default function App() {
             }
           </span>
         </div>
+
+        {/* clear history button — only shows when there's more than just the greeting */}
+        {messages.length > 1 && (
+          <button
+            className="st_header__clearBtn"
+            onClick={handleClearHistory}
+            title="Clear chat history"
+          >
+            <MdDeleteSweep size={18} />
+          </button>
+        )}
       </header>
 
       {/* chat window — scrollable area where all messages render */}
       <main className="st_chatWindow">
 
-        {/* date separator — just a visual divider at the top */}
-        <div className="st_dateSeparator">
-          <span className="st_dateSeparator__line" />
-          <span className="st_dateSeparator__text">Today</span>
-          <span className="st_dateSeparator__line" />
-        </div>
-
-        {/* render every message in the history through ChatBubble */}
-        {messages.map((msg) => (
-          <ChatBubble
-            key={msg.id}
-            sender={msg.sender}
-            message={msg.message}
-            isError={msg.isError}
-          />
-        ))}
+        {messages.map((msg, index) => {
+          const dateLabel = getDateLabel(messages, index);
+          return (
+            <div
+              key={msg.id}
+              style={{ display: "flex", flexDirection: "column" }} // ← add this
+            >
+              {dateLabel && (
+                <div className="st_dateSeparator">
+                  <span className="st_dateSeparator__line" />
+                  <span className="st_dateSeparator__text">{dateLabel}</span>
+                  <span className="st_dateSeparator__line" />
+                </div>
+              )}
+              <ChatBubble
+                sender={msg.sender}
+                message={msg.message}
+                isError={msg.isError}
+              />
+            </div>
+          );
+        })}
 
         {/* loading bubble — only shows while waiting for the API */}
         {isLoading && (
