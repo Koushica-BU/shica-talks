@@ -1,0 +1,21 @@
+.st_dateSeparator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0.25rem 0;
+}
+
+.st_dateSeparator__line {
+  flex: 1;
+  height: 1px;
+  background: #2a2738;
+}
+
+.st_dateSeparator__text {
+  font-size: 0.7rem;
+  color: #4a4460;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}

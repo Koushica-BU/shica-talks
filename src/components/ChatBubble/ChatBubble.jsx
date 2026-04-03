@@ -1,6 +1,6 @@
 import { RiRobot2Line } from "react-icons/ri";
 import { MdErrorOutline } from "react-icons/md";
-import { sanitizeHTML, parseMarkdown } from "../utils/markdown";
+import { sanitizeHTML, parseMarkdown } from "../../utils/markdown";
 import "./ChatBubble.css";
 
 // ChatBubble renders a single message in the chat

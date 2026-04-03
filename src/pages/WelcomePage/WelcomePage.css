@@ -1,0 +1,128 @@
+.st_welcome {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+  padding: 2rem 1.2rem;
+  background-color: #0f0f14;
+}
+
+.st_welcome__hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.st_welcome__logo {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c6af7, #4fc9a4);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.st_welcome__title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2.2rem;
+  font-weight: 400;
+  color: #e8e4f0;
+  letter-spacing: -0.5px;
+}
+
+.st_welcome__subtitle {
+  font-size: 1rem;
+  color: #6b6585;
+}
+
+.st_welcome__suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  max-width: 600px;
+}
+
+.st_welcome__chip {
+  padding: 0.5rem 1rem;
+  background: #1e1c2a;
+  border: 1px solid #2a2738;
+  border-radius: 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  color: #9b93b8;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.st_welcome__chip:hover {
+  border-color: #7c6af7;
+  color: #e8e4f0;
+  background: #1e1c2a;
+}
+
+.st_welcome__inputWrap {
+  width: 100%;
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.st_welcome__inputBar {
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 0.75rem 0.75rem 0.75rem 1.2rem;
+  background: #17171f;
+  border: 1px solid #2a2738;
+  border-radius: 16px;
+}
+
+.st_welcome__textarea {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  color: #e8e4f0;
+  resize: none;
+  line-height: 1.5;
+}
+
+.st_welcome__textarea::placeholder {
+  color: #4a4460;
+}
+
+.st_welcome__sendBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c6af7, #5b4de0);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.st_welcome__sendBtn:hover { opacity: 0.88; transform: scale(1.05); }
+.st_welcome__sendBtn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+.st_welcome__hint {
+  font-size: 0.72rem;
+  color: #4a4460;
+}
