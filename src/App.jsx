@@ -5,7 +5,7 @@ import ChatPage from "./pages/ChatPage/ChatPage";
 
 // API config — pulling token from .env so it's never exposed in the code
 const HF_TOKEN   = import.meta.env.VITE_HF_TOKEN;
-const HF_API_URL = "/hf-api/v1/chat/completions";
+const HF_API_URL = "https://router.huggingface.co/v1/chat/completions";
 const HF_MODEL   = "meta-llama/Llama-3.1-8B-Instruct";
 
 // the key to read/write messages in localStorage
